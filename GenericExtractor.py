@@ -3,7 +3,7 @@ import logging
 import config
 
 if config.environment == 'dev':
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '.gitignore/brazilian-economy-api-3bddf25ac8fb.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '.gitignore/keyfile.json'
 
 
 log = logging.getLogger('app.sub')

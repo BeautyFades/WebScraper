@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 import logging, sys
 from SelicExtractor import SelicExtractor
+import config
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -29,12 +30,11 @@ def health_check():
 @app.route("/run", methods=["GET"])
 def extract_from_bcb():
     app.logger.info(f'BCB-Selic scraper received /run request from {get_client_ip_address()}.')
-    selic_extractor = SelicExtractor(
-                    webdriver_path='/usr/bin/chromedriver/chromedriver'
-                    )
+    selic_extractor = SelicExtractor()
 
     try:
-        selic_df = selic_extractor.scrape()
+        raw = selic_extractor.scrape()
+        selic_df = selic_extractor.clean(raw)
         selic_extractor.upload_to_gcs(selic_df)
         return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}]", 

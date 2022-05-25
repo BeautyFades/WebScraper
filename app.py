@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 import logging, sys
 from SelicExtractor import SelicExtractor
 import config
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -35,7 +36,13 @@ def extract_from_bcb():
     try:
         raw = selic_extractor.scrape()
         selic_df = selic_extractor.clean(raw)
-        selic_extractor.upload_to_gcs(selic_df)
+        selic_extractor.convert_df_to_parquet(selic_df, 'output.parquet')
+
+        file_name_on_gcs = datetime.today().strftime('%Y_%m_%d_' + 'selic.parquet')
+
+        selic_extractor.upload_file_to_gcs('economia-webscraper', f'bcb-selic/{file_name_on_gcs}', 'output.parquet')
+        app.logger.info(f'Finished scraper execution.')
+        
         return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}]", 
             status=200, 

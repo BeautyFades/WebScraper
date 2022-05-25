@@ -1,6 +1,8 @@
 from flask import Flask, request, Response
 import logging, sys
 from SelicExtractor import SelicExtractor
+import config
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -29,13 +31,18 @@ def health_check():
 @app.route("/run", methods=["GET"])
 def extract_from_bcb():
     app.logger.info(f'BCB-Selic scraper received /run request from {get_client_ip_address()}.')
-    selic_extractor = SelicExtractor(
-                    webdriver_path='/usr/bin/chromedriver/chromedriver'
-                    )
+    selic_extractor = SelicExtractor()
 
     try:
-        selic_df = selic_extractor.scrape()
-        selic_extractor.upload_to_gcs(selic_df)
+        raw = selic_extractor.scrape()
+        selic_df = selic_extractor.clean(raw)
+        selic_extractor.convert_df_to_parquet(selic_df, 'output.parquet')
+
+        file_name_on_gcs = datetime.today().strftime('%Y_%m_%d_' + 'selic.parquet')
+
+        selic_extractor.upload_file_to_gcs('economia-webscraper', f'bcb-selic/{file_name_on_gcs}', 'output.parquet')
+        app.logger.info(f'Finished scraper execution.')
+        
         return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}]", 
             status=200, 

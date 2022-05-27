@@ -5,10 +5,6 @@ import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account
 
-if config.environment == 'dev':
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'keyfile.json'
-
-
 log = logging.getLogger('app.sub')
 
 class GenericExtractor():

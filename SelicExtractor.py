@@ -13,7 +13,7 @@ if config.environment == 'dev':
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'keyfile.json'
 
 
-log = logging.getLogger('app.sub')
+#log = logging.getLogger('app.sub')
 
 class SelicExtractor(GenericExtractor):
 
@@ -41,7 +41,7 @@ class SelicExtractor(GenericExtractor):
 
 
     def scrape(self) -> pd.DataFrame:
-        log.info('Starting BCB-Selic scraper...')
+        logging.info('Starting BCB-Selic scraper...')
 
         finished = 0
         while finished == 0:
@@ -49,11 +49,11 @@ class SelicExtractor(GenericExtractor):
                 self.driver.get("https://www.bcb.gov.br/controleinflacao/historicotaxasjuros/")
                 sleep(1)
                 finished = 1
-                log.info('Request finished successfully. Extracting table...')
+                logging.info('Request finished successfully. Extracting table...')
             except Exception as e:
                 sleep(1)
-                log.error('Failed to finish request: ' + str(e))
-                raise Exception
+                logging.error('Failed to finish request: ' + str(e))
+                raise e
 
 
         raw_table = self.driver.find_elements(By.XPATH, f'//*[@id="historicotaxasjuros"]/tbody/tr/td')
@@ -70,7 +70,7 @@ class SelicExtractor(GenericExtractor):
             element_list.append(table[x].text.replace('º', '').replace('ex.', '').replace(' ', ''))
         
         self.driver.close()
-        log.info('Closed connection to the webdriver.')
+        logging.info('Closed connection to the webdriver.')
 
         chunked_list = list(self.divide_chunks(element_list, 8))
 
@@ -82,6 +82,8 @@ class SelicExtractor(GenericExtractor):
         df[['data_inicio_vigencia', 'data_fim_vigencia']] = df['datas_vigencia'].str.split('-', n=1, expand=True)
         # Replace empty objects with NULL values
         df = df.replace('', np.nan)
+        # Replace commas in numbers to dots
+        df = df.apply(lambda x: x.str.replace(',', '.'))
         # Remove duplicate meetings where 'data_reuniao' is NULL
         df = df.dropna(subset=['data_reuniao'])
         # Drop unused column 'datas_vigencia'
@@ -90,8 +92,8 @@ class SelicExtractor(GenericExtractor):
         df = df[['n_reuniao', 'data_reuniao', 'data_inicio_vigencia', 'data_fim_vigencia', 'meta_selic_aa', 'taxa_selic_aa', 'taxa_selic_am']]
 
 
-        log.info('First row example:')
-        log.info(df.iloc[0])
-        log.info('Table extracted and cleaned successfully!')
+        logging.info('First row example:')
+        logging.info(df.iloc[0])
+        logging.info('Table extracted and cleaned successfully!')
 
         return df

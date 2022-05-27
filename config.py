@@ -1,1 +1,1 @@
-environment = 'dev'
+environment = 'run-dev' # Either dev, run-dev or run-prd

@@ -1,18 +1,11 @@
 from flask import Flask, request, Response
-import logging, sys
 from SelicExtractor import SelicExtractor
 import config
 from datetime import datetime
+from Logger import ScraperLogger
+import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s] | [%(levelname)s] >>> %(message)s', 
-                              '%Y-%m-%d %H:%M:%S %Z')
-stdout_handler = logging.StreamHandler(sys.stdout)
-stdout_handler.setLevel(logging.DEBUG)
-stdout_handler.setFormatter(formatter)
-logger.addHandler(stdout_handler)
-
+ScraperLogger()
 
 app = Flask('app')
 
@@ -22,6 +15,7 @@ def get_client_ip_address():
 
 @app.route("/", methods=["GET"])
 def health_check():
+    logging.info(f'BCB-Selic scraper received / request from {get_client_ip_address()}. Health checking...')
     return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}, {'message': 'alive'}]", 
             status=200, 
@@ -30,7 +24,7 @@ def health_check():
 
 @app.route("/run", methods=["GET"])
 def extract_from_bcb():
-    app.logger.info(f'BCB-Selic scraper received /run request from {get_client_ip_address()}.')
+    logging.info(f'BCB-Selic scraper received /run request from {get_client_ip_address()}.')
     selic_extractor = SelicExtractor()
 
     try:
@@ -41,7 +35,7 @@ def extract_from_bcb():
         file_name_on_gcs = datetime.today().strftime('%Y_%m_%d_' + 'selic.parquet')
 
         selic_extractor.upload_file_to_gcs('economia-webscraper', f'bcb-selic/{file_name_on_gcs}', 'output.parquet')
-        app.logger.info(f'Finished scraper execution.')
+        logging.info(f'Finished scraper execution.')
         
         return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}]", 

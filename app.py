@@ -1,9 +1,11 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
+from GenericExtractor import GenericExtractor
 from SelicExtractor import SelicExtractor
 import config
 from datetime import datetime
 from Logger import ScraperLogger
 import logging
+from ProtocolChecker import ProtocolChecker
 
 ScraperLogger()
 
@@ -49,3 +51,19 @@ def extract_from_bcb():
             status=500, 
             mimetype='application/json'
         )
+
+
+@app.route("/show_ip", methods=["GET"])
+def return_ip():
+    logging.info(f'BCB-Selic scraper received /show_ip request from {get_client_ip_address()}.')
+    try:
+        r = ProtocolChecker().print_screen()
+        return send_file('latest_ip_info.png', mimetype='image/png')
+
+    except Exception as e:
+        return Response(
+            "[{'returnStatus': 'fail'}, {'statusCode': '500'}, {'message': "+str(e)+"}]", 
+            status=500, 
+            mimetype='application/json'
+        )
+

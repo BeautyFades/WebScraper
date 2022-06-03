@@ -7,7 +7,7 @@ from Logger import ScraperLogger
 import logging
 from ProtocolChecker import ProtocolChecker
 
-ScraperLogger()
+l = ScraperLogger()
 
 app = Flask('app')
 
@@ -17,6 +17,7 @@ def get_client_ip_address():
 
 @app.route("/", methods=["GET"])
 def health_check():
+
     logging.info(f'BCB-Selic scraper received / request from {get_client_ip_address()}. Health checking...')
     return Response(
             "[{'returnStatus': 'success'}, {'statusCode': '200'}, {'message': 'alive'}]", 
@@ -24,9 +25,11 @@ def health_check():
             mimetype='application/json'
         )
 
-@app.route("/run", methods=["GET"])
+
+@app.route("/api/v1/run", methods=["GET"])
 def extract_from_bcb():
-    logging.info(f'BCB-Selic scraper received /run request from {get_client_ip_address()}.')
+
+    logging.info(f'BCB-Selic scraper received /api/v1/run request from {get_client_ip_address()}.')
     selic_extractor = SelicExtractor()
 
     try:
@@ -53,17 +56,19 @@ def extract_from_bcb():
         )
 
 
-@app.route("/show_ip", methods=["GET"])
-def return_ip():
-    logging.info(f'BCB-Selic scraper received /show_ip request from {get_client_ip_address()}.')
-    try:
-        r = ProtocolChecker().print_screen()
-        return send_file('latest_ip_info.png', mimetype='image/png')
+@app.route("/admin/v1/show_ip/<admin_key>", methods=["GET"])
+def return_ip(admin_key):
 
-    except Exception as e:
-        return Response(
-            "[{'returnStatus': 'fail'}, {'statusCode': '500'}, {'message': "+str(e)+"}]", 
-            status=500, 
-            mimetype='application/json'
-        )
+    if admin_key == 'iamtheboss':
+        logging.info(f'BCB-Selic scraper received /admin/v1/show_ip request from {get_client_ip_address()}.')
+        try:
+            r = ProtocolChecker().print_screen()
+            return send_file('latest_ip_info.png',
+            mimetype='image/png')
 
+        except Exception as e:
+            return Response(
+                "[{'returnStatus': 'fail'}, {'statusCode': '500'}, {'message': "+str(e)+"}]", 
+                status=500, 
+                mimetype='application/json'
+            )

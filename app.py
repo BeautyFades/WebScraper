@@ -1,11 +1,11 @@
 from flask import Flask, request, Response, send_file
-from GenericExtractor import GenericExtractor
-from SelicExtractor import SelicExtractor
+from utils.GenericExtractor import GenericExtractor
+from utils.SelicExtractor import SelicExtractor
 import config
 from datetime import datetime
-from Logger import ScraperLogger
+from utils.Logger import ScraperLogger
 import logging
-from ProtocolChecker import ProtocolChecker
+from utils.ProtocolChecker import ProtocolChecker
 
 l = ScraperLogger()
 

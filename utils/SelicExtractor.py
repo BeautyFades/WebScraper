@@ -6,7 +6,7 @@ import numpy as np
 from time import sleep
 import os
 import logging
-from GenericExtractor import GenericExtractor
+from utils.GenericExtractor import GenericExtractor
 import config
 
 if config.environment == 'dev':

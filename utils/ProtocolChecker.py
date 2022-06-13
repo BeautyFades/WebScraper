@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import os
 import logging
-from GenericExtractor import GenericExtractor
+from utils.GenericExtractor import GenericExtractor
 import config
 
 class ProtocolChecker(GenericExtractor):

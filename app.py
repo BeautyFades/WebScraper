@@ -1,7 +1,6 @@
 from flask import Flask, request, Response, send_file
-from utils.GenericExtractor import GenericExtractor
 from utils.SelicExtractor import SelicExtractor
-import config
+import utils.config as config
 from datetime import datetime
 from utils.Logger import ScraperLogger
 import logging

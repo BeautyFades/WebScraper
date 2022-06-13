@@ -1,11 +1,10 @@
 import os
 import logging
-import config
+import utils.config as config
 import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account
 
-log = logging.getLogger('app.sub')
 
 class GenericExtractor():
 
@@ -25,7 +24,7 @@ class GenericExtractor():
         try:
             return df.to_parquet(file_path, index=False)
         except Exception as e:
-            log.error('Failed to convert to .parquet: ' + str(e))
+            logging.error('Failed to convert to .parquet: ' + str(e))
             raise Exception
 
 
@@ -37,7 +36,7 @@ class GenericExtractor():
                         creds: service_account.Credentials = None
                         ) -> None:
 
-        log.info(f'Uploading {local_file_path} to GCS as {file_path_in_bucket} on bucket {bucket_name}.')
+        logging.info(f'Uploading {local_file_path} to GCS as {file_path_in_bucket} on bucket {bucket_name}.')
 
         try:
             gcs_client = storage.Client(creds)
@@ -47,5 +46,5 @@ class GenericExtractor():
                                                     
         
         except Exception as e:
-            log.error('Failed to upload: ' + str(e))
+            logging.error('Failed to upload: ' + str(e))
             raise Exception

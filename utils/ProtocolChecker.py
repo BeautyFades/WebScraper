@@ -5,7 +5,7 @@ from time import sleep
 import os
 import logging
 from utils.GenericExtractor import GenericExtractor
-import config
+import utils.config as config
 
 class ProtocolChecker(GenericExtractor):
 

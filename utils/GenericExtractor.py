@@ -1,6 +1,6 @@
 import os
 import logging
-import utils.config as config
+import config as config
 import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account

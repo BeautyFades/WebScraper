@@ -1,4 +1,4 @@
-import utils.config as config
+import config as config
 import sys
 from google.cloud import logging
 

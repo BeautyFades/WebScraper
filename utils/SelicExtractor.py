@@ -7,7 +7,7 @@ from time import sleep
 import os
 import logging
 from utils.GenericExtractor import GenericExtractor
-import utils.config as config
+import config as config
 
 if config.environment == 'dev':
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'keyfile.json'

@@ -1,1 +1,1 @@
-environment = 'dev' # Either dev, run-dev or run-prd
+environment = 'dev' # Either dev, cloudrun-dev or cloudrun-prd.

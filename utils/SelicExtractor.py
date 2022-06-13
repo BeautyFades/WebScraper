@@ -9,7 +9,7 @@ import logging
 from utils.GenericExtractor import GenericExtractor
 import config as config
 
-if config.environment == 'dev':
+if config.ENVIRONMENT == 'dev':
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'keyfile.json'
 
 

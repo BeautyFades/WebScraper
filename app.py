@@ -38,7 +38,7 @@ def extract_from_bcb():
 
         file_name_on_gcs = datetime.today().strftime('%Y_%m_%d_' + 'selic.parquet')
 
-        selic_extractor.upload_file_to_gcs('economia-webscraper', f'bcb-selic/{file_name_on_gcs}', 'output.parquet')
+        selic_extractor.upload_file_to_gcs(config.DESTINATION_BUCKET_NAME, f'{config.DESTINATION_PATH}/{file_name_on_gcs}', 'output.parquet')
         logging.info(f'Finished scraper execution.')
         
         return Response(
